@@ -69,10 +69,18 @@ export default defineComponent({
 
     onMounted(async () => {
       if (route.params.id) {
-        const response = await getById(route.params.id)
-        form.value = response
+        await getPost(route.params.id)
       }
     })
+
+    const getPost = async (id) => {
+      try {
+        const response = await getById(id)
+        form.value = response
+      } catch (error) {
+        console.error(error)
+      }
+    }
 
     const onSubmit = async () => {
       try {
