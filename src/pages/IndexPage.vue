@@ -6,6 +6,13 @@
       :columns="columns"
       row-key="name"
     >
+    <template v-slot:top>
+      <span class="text-h5">Artigos</span>
+      <q-space />
+
+      <q-btn color="primary" label="Novo" :to="{ name: 'formPost'}" />
+
+    </template>
     <template v-slot:body-cell-actions="props">
       <q-td :props="props">
         <q-btn icon="delete" color="negative" dense size="sm" @click="handleDeletePost(props.row.id)"/>
