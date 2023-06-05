@@ -57,7 +57,7 @@ import { useRouter, useRoute } from 'vue-router'
 export default defineComponent({
   name: 'FormPost',
   setup () {
-    const { post, getById } = postService()
+    const { post, getById, update } = postService()
     const $q = useQuasar()
     const router = useRouter()
     const route = useRoute()
@@ -84,7 +84,11 @@ export default defineComponent({
 
     const onSubmit = async () => {
       try {
-        await post(form.value)
+        if (form.value.id) {
+          await update(form.value)
+        } else {
+          await post(form.value)
+        }
         $q.notify({ message: 'Post salvo com sucesso', icon: 'check', color: 'positive' })
         router.push({ name: 'home' })
       } catch (error) {
