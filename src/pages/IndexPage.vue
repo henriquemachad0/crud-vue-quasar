@@ -1,17 +1,44 @@
 <template>
-  <q-page class="flex flex-center">
-    <img
-      alt="Quasar logo"
-      src="~assets/quasar-logo-vertical.svg"
-      style="width: 200px; height: 200px"
-    >
+  <q-page padding>
+    <q-table
+      title="Treats"
+      :rows="posts"
+      :columns="columns"
+      row-key="name"
+    />
   </q-page>
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import { defineComponent, ref, onMounted } from 'vue'
+import { api } from 'boot/axios'
 
 export default defineComponent({
-  name: 'IndexPage'
+  name: 'IndexPage',
+  setup () {
+    const posts = ref([])
+    const columns = [
+      { name: 'id', field: 'id', label: 'Id', sortable: true, align: 'left' },
+      { name: 'title', field: 'title', label: 'Título', sortable: true, align: 'left' },
+      { name: 'author', field: 'author', label: 'Autor', sortable: true, align: 'left' }
+    ]
+
+    onMounted(() => {
+      getPosts()
+    })
+
+    const getPosts = async () => {
+      try {
+        const { data } = await api.get('http://localhost:3000/posts')
+        posts.value = data
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    return {
+      posts,
+      columns
+    }
+  }
 })
 </script>
