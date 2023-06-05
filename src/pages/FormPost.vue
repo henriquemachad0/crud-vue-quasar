@@ -2,7 +2,6 @@
 <q-page padding>
   <q-form
       @submit="onSubmit"
-      @reset="onReset"
       class="row q-col-gutter-sm"
     >
     <q-input
@@ -50,21 +49,29 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, onMounted } from 'vue'
 import postService from 'src/services/posts'
 import { useQuasar } from 'quasar'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 export default defineComponent({
   name: 'FormPost',
   setup () {
-    const { post } = postService()
+    const { post, getById } = postService()
     const $q = useQuasar()
     const router = useRouter()
+    const route = useRoute()
     const form = ref({
       title: '',
       content: '',
       author: ''
+    })
+
+    onMounted(async () => {
+      if (route.params.id) {
+        const response = await getById(route.params.id)
+        form.value = response
+      }
     })
 
     const onSubmit = async () => {
