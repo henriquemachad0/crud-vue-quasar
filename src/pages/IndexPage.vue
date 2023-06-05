@@ -5,22 +5,31 @@
       :rows="posts"
       :columns="columns"
       row-key="name"
-    />
+    >
+    <template v-slot:body-cell-actions="props">
+      <q-td :props="props">
+        <q-btn icon="delete" color="negative" dense size="sm" @click="handleDeletePost(props.row.id)"/>
+      </q-td>
+    </template>
+  </q-table>
+
   </q-page>
 </template>
 
 <script>
 import { defineComponent, ref, onMounted } from 'vue'
-import { api } from 'boot/axios'
+import postService from 'src/services/posts'
 
 export default defineComponent({
   name: 'IndexPage',
   setup () {
     const posts = ref([])
+    const { list, remove } = postService()
     const columns = [
       { name: 'id', field: 'id', label: 'Id', sortable: true, align: 'left' },
       { name: 'title', field: 'title', label: 'Título', sortable: true, align: 'left' },
-      { name: 'author', field: 'author', label: 'Autor', sortable: true, align: 'left' }
+      { name: 'author', field: 'author', label: 'Autor', sortable: true, align: 'left' },
+      { name: 'actions', field: 'actions', label: 'Ações', align: 'right' }
     ]
 
     onMounted(() => {
@@ -29,15 +38,26 @@ export default defineComponent({
 
     const getPosts = async () => {
       try {
-        const { data } = await api.get('posts')
+        const data = await list()
         posts.value = data
       } catch (error) {
         console.log(error)
       }
     }
+
+    const handleDeletePost = async (id) => {
+      try {
+        await remove(id)
+        alert('Apagado com sucesso')
+        await getPosts()
+      } catch (error) {
+        alert(error)
+      }
+    }
     return {
       posts,
-      columns
+      columns,
+      handleDeletePost
     }
   }
 })
